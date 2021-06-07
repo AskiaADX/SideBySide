@@ -15,6 +15,7 @@ Dim columnQuestion
 Dim columnNumber = 1
 Dim hasClosedQuestion = 0
 Dim loopQuestion = CurrentQuestion.ParentLoop
+Dim aa = loopQuestion.AvailableResponses
 Dim attrChecked
 Dim attrExclusive
 Dim attrSelected
@@ -40,6 +41,12 @@ Dim removeButton = CurrentADC.PropValue("removeButton")
 Dim counterHeader = 1
 Dim countResponsesOnIteration = 1
 Dim arrResponsesOnIteration = {}
+
+Dim isHeader
+Dim showHeader = CurrentADC.PropValue("showHeaders") ="1"
+Dim expandableHeaders = CurrentADC.PropValue("expandableHeaders") ="1"
+Dim accordionInitialState = CurrentADC.PropValue("accordionInitialState")
+
 For i1 = 2 To 8
     columnQuestion = CurrentADC.PropQuestion("questionCol" + i1)
     If columnQuestion.Id <> DK Then
@@ -112,10 +119,36 @@ Dim rowspan = On((CurrentADC.PropValue("respOnHeader") = "1") and (hasClosedQues
           {% EndIf %}
       </thead>
       <tbody>
-          {% For j1 = 1 To loopQuestion.AvailableAnswers.Count
-          imgZoom = On((loopQuestion.AvailableAnswers[j1].ResourceURL <> "") and (CurrentADC.PropValue("imgZoomRow") = "1"),"data-id=\"imgZoom_" + CurrentADC.InstanceId + "_" + j1 + "\"","")
-    	  paddingZoom = On((loopQuestion.AvailableAnswers[j1].ResourceURL <> "") and (CurrentADC.PropValue("imgZoomRow") = "1"),"class=\"paddingZoom\"","")
-    	  firstBodyRow = On((j1 = 1),"class=\"firstbodyrow\"","") %}
+
+<tr>{%= aa.Count %}</tr>
+<tr>{%= aa[1].isHeader %}</tr>
+
+        {%
+          For j1 = 1 To aa.Count
+          imgZoom = On((aa[j1].ResourceURL <> "") and (CurrentADC.PropValue("imgZoomRow") = "1"),"data-id=\"imgZoom_" + CurrentADC.InstanceId + "_" + j1 + "\"","")
+  	      paddingZoom = On((aa[j1].ResourceURL <> "") and (CurrentADC.PropValue("imgZoomRow") = "1"),"class=\"paddingZoom\"","")
+  	      firstBodyRow = On((j1 = 1),"class=\"firstbodyrow\"","")
+
+          isHeader  = aa[j1].isHeader
+          If isHeader = False or showHeader = True Then
+             If isHeader = true Then
+        %}
+
+        <tr data-id="{%= CurrentADC.InstanceId %}_{%= aa[j1].index %}" class="askiarow headerRow">
+          <td colspan="{%= CurrentQuestion.Iteration(aa[1].Index).AvailableResponses.Index + 1 %}">
+            {%
+            If expandableHeaders = True Then
+                If accordionInitialState = "expanded" Then %}
+                <i class="minus"></i>
+                {% Else %}
+                <i class="plus"></i>
+                {% EndIf %}
+            {% EndIf %}
+            {%:= aa[j1].Caption %}</td>
+        </tr>
+
+        {% Else %}
+        <!-- <tr> START -->
         <tr {%:= firstBodyRow %} {%:= imgZoom %}>
             <td {%:= paddingZoom %}>
             {%  If ((stepByStep = "yes") and (useStepByStep = "buttons")) Then %}
@@ -353,6 +386,9 @@ Dim rowspan = On((CurrentADC.PropValue("respOnHeader") = "1") and (hasClosedQues
             {% EndIf
 			Next j2 %}
         </tr>
+        <!-- </tr> END -->
+          {% EndIf %}
+          {% EndIf %}
           {% Next j1 %}
       </tbody>
       <tfoot>

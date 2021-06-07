@@ -20,12 +20,54 @@ Else
 EndIf
 Dim firstColumnWidth = CurrentADC.PropValue("firstColumnWidth")
 Dim othersColumnWidth = ((100 - firstColumnWidth.ToNumber() ) / columnNumber).Floor()
+
+Dim headerColourPrimary = CurrentADC.PropValue("headerColourPrimary")
+Dim headerFontColour = CurrentADC.PropValue("headerFontColour")
+Dim headerBorderColour = CurrentADC.PropValue("headerBorderColour")
+Dim headerTextAlign = CurrentADC.PropValue("headerTextAlign")
+Dim symbolPosition = "right"
+IF headerTextAlign = "right" Then
+		symbolPosition = "left"
+EndIF
+
 %}
 {% If (CurrentADC.PropValue("showTitle") = "0") Then %}
 #adc_{%= CurrentADC.InstanceId %} thead {
     display: none;
 }
 {% EndIf %}
+
+.plus::after {
+	content: '\002B';
+  color: rgb({%= headerFontColour %});
+  font-weight: bold;
+  float: {%= symbolPosition %};
+	line-height: 1.02em;
+}
+
+.minus::after {
+	content: "\2212";
+	color: rgb({%= headerFontColour %});
+  font-weight: bold;
+	float: {%= symbolPosition %};
+  line-height: 1.02em;
+}
+/* Headers */
+#adc_{%= CurrentADC.InstanceId%} .headerRow
+{
+  background-color: rgb({%= headerColourPrimary %}) !important;
+  font-weight: bold;
+  color: rgb({%= headerFontColour %}) !important;
+  z-index: 0;
+  box-sizing: border-box;
+  line-height: 1.02em;
+}
+#adc_{%= CurrentADC.InstanceId %} .headerRow td {
+    padding: 10px 20px 10px 10px;
+    text-align: {%= CurrentADC.PropValue("headerTextAlign") %} !important;
+    border: 1px solid rgb({%= headerBorderColour %});
+}
+
 #adc_{%= CurrentADC.InstanceId %} .plusbutton input[type="button"],
 #adc_{%= CurrentADC.InstanceId %} .minusbutton input[type="button"] {
     border-radius: {%= CurrentADC.PropValue("borderRadius") %};

@@ -36,6 +36,8 @@ Next i1
     headerFixed: {%= On(CurrentADC.PropValue("headerFixed") = "1", true, false)%},
     stepByStep: {%= On(CurrentADC.PropValue("stepByStep") = "yes", true, false)%},
     useStepByStep: '{%= CurrentADC.PropValue("useStepByStep") %}',
+    expandableHeaders : {%= (CurrentADC.PropValue("expandableHeaders") = "1") %},
+    accordionInitialState : '{%= CurrentADC.PropValue("accordionInitialState") %}',
     questions: [{% For i5 = 1 To columnNumber
     	column = CurrentADC.PropQuestion("questionCol" + i5)
             If ((column.Id = DK) and (i5 = 1)) Then
